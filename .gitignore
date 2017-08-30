@@ -1,12 +1,5 @@
-/.bundle/
-/.yardoc
-/Gemfile.lock
-/_yardoc/
-/coverage/
+# documentation can always be recreated using rdoc command
 /doc/
-/pkg/
-/spec/reports/
-/tmp/
 
 # rspec failure tracking
 .rspec_status
