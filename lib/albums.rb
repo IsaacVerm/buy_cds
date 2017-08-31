@@ -1,14 +1,14 @@
 require 'bundler'
 Bundler.require(:default)
 
-class TrackList
+class Albums
 
   DEFAULT_TRACKLIST_HTML_PATH = "/home/isaac/Desktop/buy_cds/lib/data/tracklist.html"
 
-  attr_accessor :albums, :html
+  attr_accessor :list, :html
 
   def initialize
-    @albums = Array.new
+    @list = Hash.new
     @html = read_as_html
   end
 
@@ -23,13 +23,8 @@ class TrackList
     artists = @html.xpath(xpath_artists).map{ |node| node.text }
     albums = @html.xpath(xpath_albums).map{ |node| node.text }
 
-    artists.zip(albums) do |artist, album|
-      pair = Hash.new
-      pair["artist"] = artist
-      pair["album"] = album
-      @albums << pair
-    end
-
+    @list["artist"] = artists
+    @list["album"] = albums
   end
 
 end
