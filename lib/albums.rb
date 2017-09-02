@@ -1,5 +1,6 @@
 require 'bundler'
 Bundler.require(:default)
+require'csv'
 
 class Albums
 
@@ -25,6 +26,23 @@ class Albums
 
     @list["artist"] = artists
     @list["album"] = albums
+  end
+
+  def clean_album_info
+    @list["album"] = @list["album"].map{ |album| album.gsub(/\([^)]*\)|\[[^\]]*\]/,"").strip }
+  end
+
+  def write_to_csv(filename)
+
+    Dir.chdir(Dir.getwd + "/lib/data")
+
+    CSV.open(filename, "wb", encoding: 'ISO-8859-1') do |csv|
+      csv << ["artist","album"]
+
+      @list["artist"].zip(@list["album"]) do |artist, album|
+        csv << [artist, album]
+      end
+    end
   end
 
 end
