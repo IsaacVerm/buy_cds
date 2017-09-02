@@ -31,11 +31,15 @@ RSpec.describe Albums do
         expect(list.keys).to include("artist","album")
       end
       it "list contains values for each field" do
+        pending("values calculated but not used in expectation")
+
         values = Array.new
         values = list.keys { |field| values =+ list[field] }
 
         nr_char = list["artist"].map{ |artist| artist.size }
         expect(nr_char).to all( be > 0)
+
+        fail
       end
       it "contains several albums" do
         expect(list["album"].size).to be > 1
