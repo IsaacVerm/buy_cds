@@ -34,7 +34,7 @@ class Albums
 
   def write_to_csv(filename)
 
-    Dir.chdir(Dir.getwd + "/lib/data")
+    Dir.chdir(File.dirname(__FILE__) + "/data")
 
     CSV.open(filename, "wb", encoding: 'ISO-8859-1') do |csv|
       csv << ["artist","album"]

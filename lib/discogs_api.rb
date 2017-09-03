@@ -1,7 +1,7 @@
 require 'bundler'
 Bundler.require(:default)
 
-class Search
+class DiscogsAPI
 
   attr_accessor :album_info, :basic_info
 
@@ -14,15 +14,14 @@ class Search
   def get_album_info
     response = RestClient.get 'https://api.discogs.com/database/search',
                               {params: {'release_title' => @album,
-                                        'artist' => @artist,
-                                        'token' => @token}
-                              }
+                                               'artist' => @artist,
+                                               'token' => @token}
+                                     }
     @album_info = JSON.parse(response.body)
   end
 
-  def extract_basic_info
-    @basic_info = Hash.new
-    @basic_info["title"] = @album_info["results"].map { |version| version["title"] }
-    @basic_info["id"] = @album_info["results"].map { |version| version["id"] }
+  def get_release_ids
+    @release_id = @album_info["results"].map { |version| version["id"] }
   end
+
 end
