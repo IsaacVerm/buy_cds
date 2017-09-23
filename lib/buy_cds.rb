@@ -1,5 +1,3 @@
-require "buy_cds/version"
-
 module BuyCds
-  # Your code goes here...
+  PROJECT_PATH = "/home/isaac/Desktop/buy_cds/"
 end

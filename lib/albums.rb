@@ -1,40 +1,48 @@
 require 'bundler'
 Bundler.require(:default)
-require'csv'
+require 'csv'
+require_relative('./buy_cds')
 
 class Albums
 
-  DEFAULT_TRACKLIST_HTML_PATH = "/home/isaac/Desktop/buy_cds/lib/data/tracklist.html"
+  include BuyCds
 
-  attr_accessor :list, :html
+  attr_accessor :html, :list
 
   def initialize
-    @list = Hash.new
     @html = read_as_html
+
+    raw_list = extract_album_info(@html)
+    @list = clean_album_info(raw_list)
   end
 
   def read_as_html
-    Nokogiri::HTML(open(DEFAULT_TRACKLIST_HTML_PATH))
+    Nokogiri::HTML(open(BuyCds::PROJECT_PATH + 'lib/data/tracklist.html'))
   end
 
-  def add_album_info
+  def extract_album_info(html)
     xpath_artists = "//span[@class = 'artists-album ellipsis-one-line']/span[1]/span/a"
     xpath_albums = "//a[contains(@href,'album')]"
 
-    artists = @html.xpath(xpath_artists).map{ |node| node.text }
-    albums = @html.xpath(xpath_albums).map{ |node| node.text }
+    artists = html.xpath(xpath_artists).map{ |node| node.text }
+    albums = html.xpath(xpath_albums).map{ |node| node.text }
 
-    @list["artist"] = artists
-    @list["album"] = albums
+    list = Hash.new
+    list["artist"] = artists
+    list["album"] = albums
+
+    return list
   end
 
-  def clean_album_info
-    @list["album"] = @list["album"].map{ |album| album.gsub(/\([^)]*\)|\[[^\]]*\]/,"").strip }
+  def clean_album_info(list)
+    list["album"].map!{ |album| album.gsub(/\([^)]*\)|\[[^\]]*\]/,"").strip }
+
+    return list
   end
 
   def write_to_csv(filename)
 
-    Dir.chdir(File.dirname(__FILE__) + "/data")
+    Dir.chdir(BuyCds::PROJECT_PATH + "lib/data")
 
     CSV.open(filename, "wb", encoding: 'ISO-8859-1') do |csv|
       csv << ["artist","album"]

@@ -6,3 +6,7 @@
 
 # R
 .Rhistory
+
+# no rubymine files
+
+.idea/

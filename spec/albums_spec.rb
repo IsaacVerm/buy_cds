@@ -2,68 +2,50 @@ require_relative '../lib/albums'
 
 RSpec.describe Albums do
 
+  albums = Albums.new
+  html = albums.html
+  list = albums.list
+
   it "reads the tracklist as html" do
-    html = Albums.new.html
     expect(html).to be_a_kind_of(Nokogiri::HTML::Document)
     expect(html.to_s.size).to be > 10
   end
 
   context "list of albums" do
 
-    context "new list of albums" do
-      list = Albums.new.list
-
       it "is a hash" do
         expect(list).to be_a_kind_of(Hash)
       end
-      it "is empty" do
-        expect(list).to be_empty
-      end
 
-    end
-
-    context "adding artist and album info" do
-      albums = Albums.new
-      albums.add_album_info
-      list = albums.list
-
-      it "list has an artist and album field" do
+      it "has an artist and album field" do
         expect(list.keys).to include("artist","album")
       end
-      it "list contains values for each field" do
-        pending("values calculated but not used in expectation")
 
-        values = Array.new
-        values = list.keys { |field| values =+ list[field] }
+      it "contains values for each field" do
+        empty_element = -> (list, fields) do
+          empty_fields = Array.new
+          fields.each do |field|
+            empty_fields << list[field].any?{ |element| element.size < 1 }
+          end
 
-        nr_char = list["artist"].map{ |artist| artist.size }
-        expect(nr_char).to all( be > 0)
+          any_empty_fields = empty_fields.any? { |field| field == true }
 
-        fail
+          return any_empty_fields
+        end
+
+        expect(empty_element.call(list, ["album","artist"])).to be false
       end
+
       it "contains several albums" do
         expect(list["album"].size).to be > 1
-      end
+        end
 
-    end
-
-    context "cleaning added info" do
-      albums = Albums.new
-      albums.add_album_info
-      albums.clean_album_info
-      list = albums.list
-
-      it "album contains no info about specific versions" do
+      it "contains no info about specific versions" do
         expect(/edition|version|remastered/).not_to match(list["album"].join)
       end
-    end
-
   end
 
   it "writes to csv" do
-    albums = Albums.new
-    albums.add_album_info
-    albums.clean_album_info
     albums.write_to_csv("albums.csv")
 
     expect(Dir.glob("albums.csv")).to include("albums.csv")
