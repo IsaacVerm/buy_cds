@@ -1,0 +1,73 @@
+{
+	"variables": [],
+	"info": {
+		"name": "discogs",
+		"_postman_id": "4af2d93b-20a5-cd12-72f4-77ce786ec3df",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "search",
+			"request": {
+				"url": {
+					"raw": "https://api.discogs.com/database/search?artist=Mark Lanegan&release_title=Bubblegum&token=cKhZpCHFAkVvNsNUKWyiwBvYZKHOzcLYhrYbbadr&format=CD&type=master",
+					"protocol": "https",
+					"host": [
+						"api",
+						"discogs",
+						"com"
+					],
+					"path": [
+						"database",
+						"search"
+					],
+					"query": [
+						{
+							"key": "artist",
+							"value": "Mark Lanegan",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "release_title",
+							"value": "Bubblegum",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "token",
+							"value": "cKhZpCHFAkVvNsNUKWyiwBvYZKHOzcLYhrYbbadr",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "format",
+							"value": "CD",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "type",
+							"value": "master",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "User-Agent",
+						"value": "BuyCds: project to find sellers cds; isaacverm@gmail.com",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Search by artist name and release title."
+			},
+			"response": []
+		}
+	]
+}
