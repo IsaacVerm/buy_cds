@@ -10,19 +10,11 @@ end
 
 class APIResponse
   def initialize(response)
-    @response = JSON.parse(response.body)
+    @response_body = JSON.parse(response.body)
   end
 end
 
-class ScrapeRequest
-end
-
-class ScrapeResponse
-end
-
 class AlbumVersionsRequest < APIRequest
-
-  attr_accessor :master_version
 
   def initialize(artist,album)
     @artist = artist
@@ -30,28 +22,38 @@ class AlbumVersionsRequest < APIRequest
     super()
   end
 
-  def get_master_version
-    master_version = RestClient.get 'https://api.discogs.com/database/search',
+  def get_version(type)
+    version = RestClient.get 'https://api.discogs.com/database/search',
                               {params: {'release_title' => @album,
                                                'artist' => @artist,
                                                'format' => 'CD',
                                                'token' => @token,
-                                               'type' => 'master'
+                                               'type' => type
                                                 }
                                      }
-    return master_version
+    return version
   end
 end
 
 class MasterVersionResponse < APIResponse
 
-  def initialize(master_version)
+  attr_accessor :response_body
+
+  def initialize(response)
     super
-    ap @master_version
   end
 
   def get_master_id
-    master_id = @master_version
+    results = @response_body["results"].first
+
+    if results["type"] == "master"
+      master_id = results["id"].to_s
+    else
+      master_id = "no master"
+      end
+
+
+    return master_id
   end
 
 end
