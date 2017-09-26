@@ -45,13 +45,20 @@ class FindOffers
     return urls
   end
 
-  def get_offers_details_page(page_number)
+  def get_offers_single_page(page_number)
     open_page(page_number)
 
-    offers_details = Hash.new
-    offers_details["offer_id"] = get_offer_ids
+    offers = Array.new
 
-    return offers_details
+    offer_ids = get_offer_ids
+
+    offer_ids.each do |id|
+      offer = Hash.new
+      offer["id"] = id
+      offers << offer
+    end
+
+    return offers
 
     # turn from hash of arrays into array of hashes
   end
@@ -99,5 +106,5 @@ class FindOffers
 
 end
 
-find_offers = FindOffers.new(26600)
-find_offers.get_offers_details_page(1)
+# find_offers = FindOffers.new(26600)
+# find_offers.get_offers_single_page(1)
