@@ -9,7 +9,7 @@ class FindOffers
   def initialize(master_id)
     Capybara.default_driver = :selenium
     @master_id = master_id.to_s
-    @max_number_of_offers = 250
+    @max_number_of_offers = 100
   end
 
   def get_offers_url(page_number)
@@ -50,61 +50,127 @@ class FindOffers
 
     offers = Array.new
 
-    offer_ids = get_offer_ids
+    ids = get_offer_ids
+    sleeve_condition = get_sleeve_condition
+    names = get_seller_names
+    ratings = get_seller_ratings
+    prices = get_prices
+    shipping_locations = get_shipping_locations
 
-    offer_ids.each do |id|
+    ids.zip(sleeve_condition, names, ratings, prices, shipping_locations) do |id, sleeve_condition, name, rating, price, shipping_location|
       offer = Hash.new
       offer["id"] = id
+      offer["seller_name"] = name
+      offer["seller_rating"] = rating
+      offer["price_euro"] = price
+      offer["shipping_location"] = shipping_location
       offers << offer
     end
 
     return offers
-
-    # turn from hash of arrays into array of hashes
   end
 
-  def get_offers_details
+  def get_offer_ids
+    xpath = "//*[@class='item_description_title']"
 
+    ids = all(:xpath, xpath).map { |id| id[:href].split("/").last }
+
+    return ids
   end
 
-  def open_seller_page
+  def get_sleeve_condition
+    xpath = "//*[@class='item_sleeve_condition']"
+    code_regex = /\(.+\)/
 
-  end
-
-  def get_condition
-    condition_xpath = "//p[@class='item_condition']/span[3]"
-
-    condition = all(:xpath, condition_xpath).map{ |c| c.text.strip }
+    condition = all(:xpath, xpath).map do |c|
+       full_text = c.text
+       code = full_text.scan(code_regex).first.gsub(/\(|\)/, "")
+       code = "M-" if code == "NM or M-"
+       code
+    end
 
     return condition
   end
 
-  def get_seller_name
+  def get_media_condition
+    xpath = "//p[@class='item_condition']/span[3]"
+    code_regex = /\(.+\)/
 
+    condition = all(:xpath, xpath).map do |c|
+      full_text = c.text
+      code = full_text.scan(code_regex).first.gsub(/\(|\)/, "")
+      code = "M-" if code == "NM or M-"
+      code
+    end
+
+    return condition
   end
 
-  def get_seller_feedback
+  def get_seller_names
+    xpath = "//*[@class='seller_info']/ul/li[1]//a"
 
+    names = all(:xpath, xpath).map{ |name| name.text }
+
+    return names
   end
 
-  def get_offer_ids
-    offer_ids_xpath = "//*[@class='item_description_title']"
+  def get_seller_ratings
+    xpath = "//*[@class='seller_info']/ul/li[2]//strong"
 
-    offer_ids = all(:xpath, offer_ids_xpath).map { |id| id[:href].split("/").last }
+    rating = all(:xpath, xpath).map{ |r| r.text.gsub('%','').to_f }
 
-    return offer_ids
+    return rating
   end
 
-  def price
+  def get_prices
+    xpath_original_prices = "//*[@class='item_price hide_mobile']/span[@class='price']"
+    xpath_converted_prices = "//*[@class='converted_price']"
 
+    original_prices = all(:xpath, xpath_original_prices).map { |price| price.text }
+    converted_prices = all(:xpath, xpath_converted_prices).map { |price| price.text }
+
+    # find ind of converted prices
+    ind_foreign_currency_in_original_prices = Array.new
+
+    original_prices.each_with_index do |price, i|
+      price_in_euro = price.include?("€")
+      ind_foreign_currency_in_original_prices << i if !price_in_euro
+      end
+
+    # change ind to converted prices
+    prices = original_prices
+
+    ind_foreign_currency_in_original_prices.zip(converted_prices) do |ind, price|
+      prices[ind] = price
+    end
+
+    # remove euro symbol and about
+    price_regex = /\d{1,3}\.\d{2}/
+    prices.map! do |price|
+      price_without = price.scan price_regex
+      price_without.first
+    end
+
+    return prices
   end
 
-  def get_shipping_policy
+  def get_shipping_locations
+    xpath = "//*[text()='Ships From:']/.."
 
+    locations = all(:xpath, xpath).map{ |location| location.text.gsub("Ships From:","") }
+
+    return locations
   end
+
+  # def get_shipping_policies
+  #   xpath_policy_link = "//td[@class='item_price hide_mobile']//a[@class='show-terms-link']"
+  #   xpath_policy = "//div[@class='react-modal ']"
+  #
+  # end
 
 
 end
 
 # find_offers = FindOffers.new(26600)
 # find_offers.get_offers_single_page(1)
+# find_offers.get_shipping_locations
