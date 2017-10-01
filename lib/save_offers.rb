@@ -1,29 +1,31 @@
 require 'bundler'
 Bundler.require(:default)
+require 'active_record'
 
-class Offer < ApplicationRecord
+ActiveRecord::Base.establish_connection(
+    :adapter => 'mysql2',
+    :database => 'offers',
+    :username => 'root',
+    :password => 'bed303',
+    :host => "localhost",
+    :port => 3306)
+
+class Offer < ActiveRecord::Base
 end
 
-# offers = [{"id" => "123456789",
-#            "sleeve_condition" => "VG+",
-#            "media_condition" => "VG+",
-#            "seller_name" => "eurecords",
-#            "seller_rating" => 99.1,
-#            "price_euro" => "15.00",
-#            "shipping_policy" => "PAYPAL ACCEPTED ONLY!",
-#            "shipping_location" => "Greece",
-#            "year" => "2012"},
-#           {"id" => "456796546",
-#            "sleeve_condition" => "M",
-#            "media_condition" => "M",
-#            "seller_name" => "JMS-Music",
-#            "seller_rating" => 100,
-#            "price_euro" => "103.00",
-#            "shipping_policy" => "PAYPAL NOT ACCEPTED!",
-#            "shipping_location" => "Denmark",
-#            "year" => "1999"}]
+class SaveOffers
 
+  def initialize(offer)
+    @offer = offer
+    save_to_database
+  end
 
-offer = Offer.new
-offer.seller_name = "John Doe"
-puts offer.seller_name
+  def save_to_database
+    Offer.create(id: @offer["id"],
+                seller_name: @offer["seller_name"],
+                seller_rating: @offer["seller_rating"],
+                price_euro: @offer["price_euro"],
+                shipping_location: @offer["shipping_location"]
+    )
+  end
+end

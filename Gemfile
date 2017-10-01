@@ -12,3 +12,4 @@ gem "selenium-webdriver"
 gem "debase" # debugging rubymine
 gem "ruby-debug-ide" # debugging rubymine
 gem "activerecord"
+gem "mysql2"

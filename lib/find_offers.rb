@@ -171,6 +171,6 @@ class FindOffers
 
 end
 
-# find_offers = FindOffers.new(26600)
-# find_offers.get_offers_single_page(1)
-# find_offers.get_shipping_locations
+find_offers = FindOffers.new(26600)
+offers = find_offers.get_offers_single_page(1)
+find_offers.get_shipping_locations

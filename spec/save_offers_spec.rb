@@ -3,23 +3,15 @@ require_relative '../lib/save_offers'
 RSpec.describe SaveOffers do
 
   offers = [{"id" => "123456789",
-             "sleeve_condition" => "VG+",
-             "media_condition" => "VG+",
              "seller_name" => "eurecords",
              "seller_rating" => 99.1,
              "price_euro" => "15.00",
-             "shipping_policy" => "PAYPAL ACCEPTED ONLY!",
-             "shipping_location" => "Greece",
-             "year" => "2012"},
+             "shipping_location" => "Greece"},
             {"id" => "456796546",
-             "sleeve_condition" => "M",
-             "media_condition" => "M",
              "seller_name" => "JMS-Music",
              "seller_rating" => 100,
              "price_euro" => "103.00",
-             "shipping_policy" => "PAYPAL NOT ACCEPTED!",
-             "shipping_location" => "Denmark",
-             "year" => "1999"}]
+             "shipping_location" => "Denmark"}]
 
   context "correctness check" do
 
@@ -27,10 +19,14 @@ RSpec.describe SaveOffers do
     it "doesn't add the field if not all fields are filled in"
   end
 
-  context "save to database"
+  context "database connection" do
+    it "connects"
+  end
 
-  context "no data lost" do
+  context "adding data" do
     it "timestamp field is added"
-    it "data can only be added"
+    it "data can only be added" do
+      SaveOffers.new(offers[0])
+    end
   end
 end

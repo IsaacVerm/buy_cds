@@ -42,6 +42,7 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.3.0)
     minitest (5.10.3)
+    mysql2 (0.4.9)
     netrc (0.11.0)
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
@@ -91,6 +92,7 @@ DEPENDENCIES
   capybara
   debase
   json
+  mysql2
   nokogiri
   rest-client
   rspec
