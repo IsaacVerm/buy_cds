@@ -69,8 +69,7 @@ RSpec.describe FindOffers do
       end
 
       it "each offer has several attributes" do
-        expected_offer_attributes = ["id", "sleeve_condition", "media_condition", "seller_name",
-                                     "seller_rating", "price_euro", "shipping_policy", "shipping_location", "release_year"]
+        expected_offer_attributes = ["id", "seller_name", "seller_rating", "price_euro", "shipping_location"]
 
         @offers.each_with_index do |offer, i|
           expect(offer.keys).to match_array(expected_offer_attributes),
